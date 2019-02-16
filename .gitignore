@@ -34,3 +34,10 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# Photon Unity Networking
+
+Tele-Room/Assets/Photon/*
+!Tele-Room/Assets/Photon/PhotonUnityNetworking/
+Tele-Room/Assets/Photon/PhotonUnityNetworking/*
+!Tele-Room/Assets/Photon/PhotonUnityNetworking/Resources
