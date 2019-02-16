@@ -1,14 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SpatialTracking;
 using Photon.Pun;
+using GoogleARCore;
 
-public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable
-{
+public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable {
     Camera cam;
 
     bool LockedToMaster = true;
-    
+    bool tracking = true;
+
     #region Properties
 
 
@@ -18,19 +20,42 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable
 
     #region Base callbacks
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    void Awake() {
         cam = GetComponent<Camera>();
         if (cam == null) {
             cam = Camera.main;
         }
+
+        if (CheckDisable()) {
+            DisableTracking();
+        }
+
+    }
+
+    // Start is called before the first frame update
+    void Start() {
+        //cam = GetComponent<Camera>();
+        //if (cam == null) {
+        //    cam = Camera.main;
+        //}
+
+        //if (photonView.IsMine) {
+        //    TrackedPoseDriver tpd = GetComponent<TrackedPoseDriver>();
+        //    GoogleARCore.ARCoreSession session = GetComponent<GoogleARCore.ARCoreSession>();
+        //    if (tpd) {
+        //        tpd.enabled = false;
+        //        session.enabled = false;
+        //        Debug.Log("Tracking Disabled");
+        //    }
+        //}
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    void Update() {
+        if (CheckDisable()) {
+            Debug.Log("frick");
+            DisableTracking();
+        }
     }
 
     #endregion
@@ -44,7 +69,8 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable
             Quaternion rot = GetRotation();
             stream.Serialize(ref pos);
             stream.Serialize(ref rot);
-        } else {
+        }
+        else {
             Vector3 pos = Vector3.zero;
             Quaternion rot = Quaternion.identity;
             stream.Serialize(ref pos);
@@ -53,7 +79,8 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable
             if (!photonView.IsMine) {
                 Debug.Log(string.Format("Received Position ({0})", pos.ToString()));
                 Sync(pos, rot);
-            } else {
+            }
+            else {
                 Debug.Log("View is mine :(");
             }
         }
@@ -69,14 +96,7 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable
     #region Methods
 
     Vector3 GetPosition() {
-
-        //return transform.position;
-        Vector3 p = Input.mousePosition;
-        p.z = 5;
-
-        p = cam.ScreenToWorldPoint(p);
-
-        return p;
+        return transform.position;
     }
 
     Quaternion GetRotation() {
@@ -88,6 +108,28 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable
             transform.position = pos;
             transform.rotation = rot;
         }
+    }
+
+    bool CheckDisable() {
+        return tracking && !photonView.IsMine && PhotonNetwork.InRoom;
+    }
+
+    void DisableTracking() {
+        TrackedPoseDriver tpd = GetComponent<TrackedPoseDriver>();
+        ARCoreSession session = GetComponent<ARCoreSession>();
+        InstantPreviewTrackedPoseDriver iptpd = GetComponent<InstantPreviewTrackedPoseDriver>();
+        if (tpd) {
+            tpd.enabled = false;
+        }
+        if (session) {
+            session.enabled = false;
+        }
+        if (iptpd) {
+            iptpd.enabled = false;
+        }
+        tracking = false;
+        Debug.Log("Tracking Disabled");
+
     }
 
     #endregion
