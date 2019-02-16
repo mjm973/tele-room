@@ -8,6 +8,9 @@ using GoogleARCore;
 public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable {
     Camera cam;
 
+    public GameObject model;
+    public float dist;
+
     bool LockedToMaster = true;
     bool tracking = true;
 
@@ -53,8 +56,27 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable {
     // Update is called once per frame
     void Update() {
         if (CheckDisable()) {
-            Debug.Log("frick");
+            Debug.Log("oh forking shirtballs");
             DisableTracking();
+        }
+
+        Touch touch = Input.GetTouch(0);
+
+        switch (touch.phase)
+        {
+
+            case TouchPhase.Began:
+
+
+                Vector2 startPos = touch.position;
+
+                Vector3 tapPosFar = new Vector3(startPos.x, startPos.y, (cam.nearClipPlane + dist));
+
+                Vector3 tapPosF = cam.ScreenToWorldPoint(tapPosFar);
+
+                Instantiate(model, tapPosF, transform.rotation);
+
+                break;
         }
     }
 
@@ -131,6 +153,7 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable {
         Debug.Log("Tracking Disabled");
 
     }
+
 
     #endregion
 }
