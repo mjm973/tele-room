@@ -9,6 +9,11 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 1
+<<<<<<< HEAD
     path: Assets/Scenes/NetworkTest.unity
     guid: c047a751d79b7b748af95220e43cb270
+=======
+    path: Assets/Scenes/SampleScene.unity
+    guid: b41eff4be31beab428051add658b7507
+>>>>>>> 575adc619bf87eb24439929abe562dd491e7b19c
   m_configObjects: {}
