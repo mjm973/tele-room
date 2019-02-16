@@ -11,6 +11,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public GameObject cameraPrefab;
 
+    //public static bool Joined {
+    //    get { return joined; }
+    //}
+
+    //static bool joined = false;
+
     #region Base Callbacks
 
     private void Awake() {
