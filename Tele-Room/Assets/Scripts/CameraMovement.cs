@@ -14,12 +14,15 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable {
     bool LockedToMaster = true;
     bool tracking = true;
 
+    public AudioClip MusicClip;
+    public AudioSource MusicSource;
+
     #region Properties
 
 
 
     #endregion
-
+        
 
     #region Base callbacks
 
@@ -37,6 +40,7 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable {
 
     // Start is called before the first frame update
     void Start() {
+        MusicSource.clip = MusicClip;
         //cam = GetComponent<Camera>();
         //if (cam == null) {
         //    cam = Camera.main;
@@ -60,7 +64,9 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable {
             DisableTracking();
         }
 
+  //Detect Screen tap
         Touch touch = Input.GetTouch(0);
+        RaycastHit hit;
 
         switch (touch.phase)
         {
@@ -71,13 +77,41 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable {
                 Vector2 startPos = touch.position;
 
                 Vector3 tapPosFar = new Vector3(startPos.x, startPos.y, (cam.nearClipPlane + dist));
+                Vector3 tapPosNear = new Vector3(startPos.x, startPos.y, (cam.nearClipPlane));
 
                 Vector3 tapPosF = cam.ScreenToWorldPoint(tapPosFar);
+                Vector3 tapPosN = cam.ScreenToWorldPoint(tapPosNear);
+                
+                //Touch Raycast + Audio 
 
-                Instantiate(model, tapPosF, transform.rotation);
+                if (Physics.Raycast(tapPosN, tapPosF - tapPosN, out hit) && hit.transform.tag == "model")
+                {
+                    MusicSource.Play();
+                }
+                else      //Tap to instantiate objects
+                {
+
+                    Instantiate(model, tapPosF, transform.rotation);
+                }
 
                 break;
         }
+
+
+ 
+
+        //Line of sight raycast + Haptic
+        Ray lray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        if (Physics.Raycast(lray, out hit))
+        {
+            if (hit.transform.tag == "model")
+            {
+                Handheld.Vibrate();
+            }
+        }
+
+
+
     }
 
     #endregion
