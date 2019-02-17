@@ -369,8 +369,7 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 0
   OwnershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 0}
+  ObservedComponents: []
   viewIdField: 1
   InstantiationId: 1
   isRuntimeInstantiated: 0

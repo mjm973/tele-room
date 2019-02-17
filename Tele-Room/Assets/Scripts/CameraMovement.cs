@@ -255,6 +255,32 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable {
         }
 
 
+    //Mouse controls for testing
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector2 startPos = touch.position;
+
+            Vector3 tapPosFar = new Vector3(startPos.x, startPos.y, (cam.nearClipPlane + dist));
+            Vector3 tapPosNear = new Vector3(startPos.x, startPos.y, (cam.nearClipPlane));
+
+            Vector3 tapPosF = cam.ScreenToWorldPoint(tapPosFar);
+            Vector3 tapPosN = cam.ScreenToWorldPoint(tapPosNear);
+
+            model = loadedObject;
+            model.tag = "model";
+
+            //Touch Raycast + Audio 
+
+            if (Physics.Raycast(tapPosN, tapPosF - tapPosN, out hit) && hit.transform.tag == "model")
+            {
+                MusicSource.Play();
+            }
+            else      //Tap to instantiate objects
+            {
+
+                Instantiate(model, tapPosF, transform.rotation);
+            }
+        }
 
     }
 
