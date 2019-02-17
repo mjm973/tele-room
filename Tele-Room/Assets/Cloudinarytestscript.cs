@@ -14,6 +14,12 @@ public class Cloudinarytestscript : MonoBehaviour
     GameObject loadedObject;
     List<string> modelIDs;
 
+
+    string targetID;
+    string targetIDObj;
+    string targetIDNormal;
+
+
     Shader shader;
 
     // Code to load PNG file
@@ -49,7 +55,7 @@ public class Cloudinarytestscript : MonoBehaviour
     // Start is called before the first frame update
     IEnumerator Start()
     {
-        CloudinaryDotNet.Account account = new CloudinaryDotNet.Account("######", "#####", "#######");
+        CloudinaryDotNet.Account account = new CloudinaryDotNet.Account("###########", "###########", "###########");
         CloudinaryDotNet.Cloudinary cloudinary = new CloudinaryDotNet.Cloudinary(account);
 
 
@@ -83,6 +89,19 @@ public class Cloudinarytestscript : MonoBehaviour
         {
             string[] split = i.Split('-');
             Debug.Log(split[1]);
+
+            switch (split[1])
+            {
+                case "Normal":
+                    targetIDNormal = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + i;
+                    break;
+                case "Color":
+                    targetID = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + i;
+                    break;
+                case "Model.obj":
+                    targetIDObj = "http://res.cloudinary.com/dti0lstz7/raw/upload/v1550299645/" + i;
+                    break;
+            }
         }
 
         // ###############################################################################################
@@ -92,9 +111,9 @@ public class Cloudinarytestscript : MonoBehaviour
 
 
         // TargetID of the color file online
-        string targetIDNormal = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + result.Resources[0].PublicId;
-        string targetID = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + result.Resources[2].PublicId;
-        string targetIDObj = "http://res.cloudinary.com/dti0lstz7/raw/upload/v1550299645/" + result.Resources[1].PublicId;
+        //string targetIDNormal = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + result.Resources[0].PublicId;
+        //string targetID = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + result.Resources[2].PublicId;
+        //string targetIDObj = "http://res.cloudinary.com/dti0lstz7/raw/upload/v1550299645/" + result.Resources[1].PublicId;
 
         string objectString;
         using (WWW www = new WWW(targetIDObj))
