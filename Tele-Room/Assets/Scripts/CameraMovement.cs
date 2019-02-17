@@ -133,7 +133,7 @@ public class CameraMovement : MonoBehaviourPunCallbacks, IPunObservable {
             stream.Serialize(ref rot);
 
             if (!photonView.IsMine) {
-                Debug.Log(string.Format("Received Position ({0})", pos.ToString()));
+                //Debug.Log(string.Format("Received Position ({0})", pos.ToString()));
                 Sync(pos, rot);
             }
             else {

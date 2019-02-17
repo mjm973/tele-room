@@ -19,7 +19,7 @@ public class StreamerChan : CallApp
 
     IOType role = IOType.Undefined;
 
-    protected bool localVideo = false; // bc base version is private???????
+    protected bool localVideo = true; // bc base version is private???????
     ConnectionId remoteId = ConnectionId.INVALID;
     string useAddress = null;
 
@@ -38,15 +38,18 @@ public class StreamerChan : CallApp
         if (receiver) {
             role = IOType.Receiver;
             Debug.Log("I'm Watching!");
-            view.RPC("GoGo", RpcTarget.Others);
+            view.RPC("GoGo", RpcTarget.Others, false);
         } else {
             role = IOType.Streamer;
             Debug.Log("I'm Streaming!");
         }
 
+
         ConfigureStream();
 
         SetupCall();
+
+        VideoTest.instance.DebugState(role);
     }
 
     public void FetchFrame() {
@@ -58,13 +61,19 @@ public class StreamerChan : CallApp
 
         Debug.Log("hi hi");
 
-        if (VideoTest.instance && role == IOType.Receiver) {
+        VideoTest.instance.DebugCall(3);
+
+        if (VideoTest.instance) { // && role == IOType.Receiver) {
             VideoTest.instance.SetFrame(frameUpdateEventArgs.Frame, frameUpdateEventArgs.Format);
         }
+
+        
     }
 
     public override void SetupCall() {
         Debug.Log("Setting up...");
+
+        StreamerCam.instance.Register();
 
         NetworkConfig netConfig = CreateNetworkConfig();
 
@@ -77,6 +86,9 @@ public class StreamerChan : CallApp
 
         mCall.LocalFrameEvents = localVideo;
         string[] devices = UnityCallFactory.Instance.GetVideoDevices();
+        foreach (string d in devices) {
+            Debug.Log(d);
+        }
         if (devices == null || devices.Length == 0) {
             Debug.LogWarning("No device info???");
         } else {
@@ -113,6 +125,10 @@ public class StreamerChan : CallApp
                 Debug.Log("New connection with id: " + remoteId
                     + " audio:" + mCall.HasAudioTrack(remoteId)
                     + " video:" + mCall.HasVideoTrack(remoteId));
+
+                // DEBUG
+                VideoTest.instance.DebugCall(2);
+
                 break;
             case CallEventType.CallEnded:
                 //Call was ended / one of the users hung up -> reset the app
@@ -141,7 +157,7 @@ public class StreamerChan : CallApp
                 break;
 
             case CallEventType.FrameUpdate: {
-
+                    VideoTest.instance.DebugCall(5);
                     //new frame received from webrtc (either from local camera or network)
                     if (e is FrameUpdateEventArgs) {
                         UpdateFrame((FrameUpdateEventArgs)e);
@@ -159,6 +175,10 @@ public class StreamerChan : CallApp
                     //the chat app will wait for another app to connect via the same string
                     WaitForIncomingCallEventArgs args = e as WaitForIncomingCallEventArgs;
                     Append("Waiting for incoming call address: " + args.Address);
+
+                    // DEBUG
+                    VideoTest.instance.DebugCall(1);
+
                     break;
                 }
         }
@@ -181,12 +201,12 @@ public class StreamerChan : CallApp
         MediaConfig config = base.CreateMediaConfig();
         switch (role) {
             case IOType.Streamer:
-                config.Video = false; // Send, not receive
-                config.VideoDeviceName = null; // TODO: get camera
+                config.Video = true; // Send, not receive
+                config.VideoDeviceName = "StreamerCam"; // TODO: get camera
                 break;
             case IOType.Receiver:
                 config.Video = true; // Receive, not send
-                config.VideoDeviceName = null;
+                config.VideoDeviceName = "StreamerCam";
                 break;
             case IOType.Undefined:
                 Debug.LogWarning("Waiting for other side, returning null (MediaConfig)!");

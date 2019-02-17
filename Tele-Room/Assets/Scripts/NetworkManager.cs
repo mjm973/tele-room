@@ -61,6 +61,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 #endif
         base.OnJoinedRoom();
 
+        VideoTest.instance.DebugCall(0);
+
         int num = PhotonNetwork.CurrentRoom.PlayerCount;
         bool ready = num == 2;
 

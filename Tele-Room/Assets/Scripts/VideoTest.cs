@@ -26,11 +26,49 @@ public class VideoTest : MonoBehaviour
         
     }
 
+    public void DebugState(IOType role) {
+        switch (role) {
+            case IOType.Streamer:
+                transform.localScale = Vector3.one * 0.5f;
+                break;
+            case IOType.Receiver:
+                transform.localScale = Vector3.one * 2f;
+                break;
+        }
+    }
+
+    public void DebugCall(int idx) {
+        switch (idx) {
+            case 0:
+                mr.material.color = Color.green;
+                break;
+            case 1:
+                mr.material.color = Color.yellow;
+                break;
+            case 2:
+                mr.material.color = Color.white;
+                break;
+            case 3:
+                mr.material.color = Color.gray; // updateframe callback
+                break;
+            case 4:
+                mr.material.color = Color.cyan; // v cam receiving data
+                break;
+            case 5:
+                mr.material.color = Color.red; // receive frame, before callback
+                break;
+        }
+    }
+
     public void SetFrame(IFrame frame, FramePixelFormat format) {
         if (frame != null) {
             Debug.Log("frameee");
             UnityMediaHelper.UpdateTexture(frame, ref VideoTexture);
             mr.material.mainTexture = VideoTexture;
         }
+    }
+
+    public void SetFrameAR(Texture frame, FramePixelFormat format) {
+
     }
 }
