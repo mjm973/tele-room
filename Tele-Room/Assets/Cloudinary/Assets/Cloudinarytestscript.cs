@@ -11,8 +11,14 @@ public class Cloudinarytestscript : MonoBehaviour
     string tempPath;
     string tempPathNormal;
     string tempPathObject;
-   public GameObject loadedObject;
+    GameObject loadedObject;
     List<string> modelIDs;
+
+
+    string targetID;
+    string targetIDObj;
+    string targetIDNormal;
+
 
     Shader shader;
 
@@ -54,7 +60,7 @@ public class Cloudinarytestscript : MonoBehaviour
 
 
         //Get the path of the Game data folder
-        //m_Path = Application.dataPath + "/testUpload.jpg";
+        m_Path = Application.dataPath + "/testUpload.jpg";
         //Output the Game data path to the console
 
         CloudinaryDotNet.Actions.SearchResult result = cloudinary.Search()
@@ -83,6 +89,19 @@ public class Cloudinarytestscript : MonoBehaviour
         {
             string[] split = i.Split('-');
             Debug.Log(split[1]);
+
+            switch (split[1])
+            {
+                case "Normal":
+                    targetIDNormal = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + i;
+                    break;
+                case "Color":
+                    targetID = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + i;
+                    break;
+                case "Model.obj":
+                    targetIDObj = "http://res.cloudinary.com/dti0lstz7/raw/upload/v1550299645/" + i;
+                    break;
+            }
         }
 
         // ############################################################################################### 
@@ -92,9 +111,9 @@ public class Cloudinarytestscript : MonoBehaviour
 
 
         // TargetID of the color file online
-        string targetIDNormal = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + result.Resources[0].PublicId;
-        string targetID = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + result.Resources[2].PublicId;
-        string targetIDObj = "http://res.cloudinary.com/dti0lstz7/raw/upload/v1550299645/" + result.Resources[1].PublicId;
+        //string targetIDNormal = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + result.Resources[0].PublicId;
+        //string targetID = "http://res.cloudinary.com/dti0lstz7/image/upload/v1550299645/" + result.Resources[2].PublicId;
+        //string targetIDObj = "http://res.cloudinary.com/dti0lstz7/raw/upload/v1550299645/" + result.Resources[1].PublicId;
 
         string objectString;
         using (WWW www = new WWW(targetIDObj))
@@ -133,7 +152,6 @@ public class Cloudinarytestscript : MonoBehaviour
             www.LoadImageIntoTexture(texNormal);
             myNewMaterial.SetTexture("_Texture", texNormal);
         }
-
 
         loadedObject.GetComponentInChildren<Renderer>().material = myNewMaterial;
 
