@@ -4,12 +4,15 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
+[RequireComponent(typeof(StreamerChan))]
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
 
     string version = "1";
 
     public GameObject cameraPrefab;
+
+    StreamerChan streamer;
 
     //public static bool Joined {
     //    get { return joined; }
@@ -21,6 +24,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     private void Awake() {
         PhotonNetwork.AutomaticallySyncScene = true;
+        streamer = GetComponent<StreamerChan>();
     }
     // Start is called before the first frame update
     void Start()
@@ -57,7 +61,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 #endif
         base.OnJoinedRoom();
 
-        Debug.Log(string.Format("Joined {0} with {1} players!", PhotonNetwork.CurrentRoom.Name, PhotonNetwork.CurrentRoom.PlayerCount));
+        int num = PhotonNetwork.CurrentRoom.PlayerCount;
+        bool ready = num == 2;
+
+        Debug.Log(string.Format("Joined {0} with {1} players!", PhotonNetwork.CurrentRoom.Name, num));
+
+        if (ready) {
+            // GO GO STREAMER-CHAN~~~
+            Debug.Log("Let's go!");
+            streamer.GoGo(true);
+        } else {
+            Debug.Log("Waiting for other side...");
+        }
     }
 
     public override void OnDisconnected(DisconnectCause cause) {
